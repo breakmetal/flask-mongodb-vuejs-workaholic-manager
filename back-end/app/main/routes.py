@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request, url_for
 from . import main
 from ..models.task import Task
+from ..models.project import Project
 
 @main.route('/')
 def index():
@@ -41,3 +42,30 @@ def addSubTask():
     id = "5d9217b53a42882864214a42"
     response = Task.insert_sub_task(id, request.form)
     return response
+
+############################
+###### API for projects#####
+############################
+
+@main.route('/api/list_projects', methods = ['GET'])
+def listProjects():
+    response = Project.get_all_projects()
+    return response
+
+@main.route('/api/add_project', methods = ["POST"])
+def addProject():
+    obj = request.get_json()
+    newProject = Project(obj['title'], obj['description'])
+    return newProject.insert()
+    
+
+@main.route('/api/update_project/<id>', methods = ['PUT'])
+def updateProject(id):
+    project = request
+    return Project.update_project(id, project)
+
+
+@main.route('/api/delete_project/<id>', methods = ['DELETE'])
+def deleteProject(id):
+    Project.delete_project(id)
+    return 'ok'
