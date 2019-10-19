@@ -3,11 +3,14 @@ import datetime
 from flask import Flask, jsonify, request
 from app import mongo
 from bson.json_util import dumps
+from bson.json_util import DEFAULT_JSON_OPTIONS
 
 
 class Task(object):
 
     def __init__(self,kwargs):
+        id = kwargs['project_id']
+        self.project_id = ObjectId( ObjectId(id))
         self.title = kwargs["title"]
         self.created_at = datetime.datetime.utcnow()
         self.date_limit = kwargs["date_limit"]
@@ -15,10 +18,10 @@ class Task(object):
 
     
     @staticmethod
-    def get_all_tasks():
-        tasks = mongo.db.tasks.find() 
+    def get_all_tasks(id):
+        tasks = mongo.db.tasks.find({ "project_id": ObjectId(id) }) 
+        DEFAULT_JSON_OPTIONS.datetime_representation = 2
         json_str = dumps(tasks)
-        #record2 = loads(json_str)
         return json_str
 
     @staticmethod
@@ -31,12 +34,13 @@ class Task(object):
         mongo.db.tasks.insert_one(data)
 
     @staticmethod
-    def insert_sub_task(id, kwargs):
-        #insert
-        data = {"title" : 'hola', "description": "adios"}
-        mongo.db.tasks.update({"title": 'working hard'}, {'$push':{"sub-task": {'$each': [data]}}})
+    def insert_sub_task(kwargs):
+        id = kwargs['idTask']
+        #data = {"title" : 'hola', "description": "adios"}
+        #mongo.db.tasks.update({"title": 'working hard'}, {'$push':{"sub-task": {'$each': [data]}}})
         #mongo.db.tasks.update({"_id": ObjectId(id)}, {'$push':{"sub-task": {"title": 'it is live'}}})
         #mongo.db.tasks.update({"title": 'Analisis de requerimiento'},{'$push':{"sub-task": {"title" : 'ok, its work' }})
+        mongo.db.tasks.update({"_id": ObjectId(id)}, {'$push':{"subTasks": {"title": kwargs['title'],"description": kwargs['description']}}})
         return 'hi'
 
     def update_sub_task(self, parameter_list):

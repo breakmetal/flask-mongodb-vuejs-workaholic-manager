@@ -2,7 +2,8 @@ from bson.objectid import ObjectId
 import datetime
 from flask import Flask, jsonify, request
 from app import mongo
-from bson.json_util import dumps
+from bson.json_util import dumps, loads
+from bson.json_util import DEFAULT_JSON_OPTIONS
 
 class Project(object):
     
@@ -10,6 +11,7 @@ class Project(object):
         self.title = title
         self.created_at = datetime.datetime.utcnow()
         self.description = description
+        self.status = "active"
 
     def  insert(self):
         data = self.__dict__
@@ -17,8 +19,18 @@ class Project(object):
         return 'ok'
 
     @staticmethod
-    def get_all_projects():
-        projects = mongo.db.projects.find() 
+    def get_all_projects(parameters):
+        if parameters.args.get('column')!='':
+            columns ={
+                "t": "title",
+                "d": "created_at",
+                "s": "status"
+            }
+            projects = mongo.db.projects.find({columns[parameters.args.get('column')]: { '$regex': ".*"+parameters.args.get('query')+".*" } }) 
+        else:
+            projects = mongo.db.projects.find() 
+
+        DEFAULT_JSON_OPTIONS.datetime_representation = 2
         json_str = dumps(projects)
         return json_str
     
@@ -30,5 +42,9 @@ class Project(object):
     @staticmethod
     def delete_project(id):
         mongo.db.projects.delete_one({"_id": ObjectId(id)})
+
+    @staticmethod
+    def viewProject(id):
+        pass
 
     

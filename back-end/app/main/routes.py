@@ -3,11 +3,6 @@ from . import main
 from ..models.task import Task
 from ..models.project import Project
 
-@main.route('/')
-def index():
-    response = Task.get_all_tasks()
-    return response
-
 @main.route('/form_task', methods = ["GET"])
 def form():
     return """
@@ -19,12 +14,7 @@ def form():
     </form>"""
 
 
-@main.route('/add_task', methods = ["POST"])
-def addTask():
-    
-    newTask = Task(request.form)
-    newTask.insert()
-    return "listo"
+
 
 ###############################################
 @main.route('/form_sub_task', methods = ["GET"])
@@ -37,11 +27,6 @@ def form_sub_task():
         <input type="submit">
     </form>"""
 
-@main.route('/add_sub_task', methods = ["POST"])
-def addSubTask():
-    id = "5d9217b53a42882864214a42"
-    response = Task.insert_sub_task(id, request.form)
-    return response
 
 ############################
 ###### API for projects#####
@@ -49,7 +34,8 @@ def addSubTask():
 
 @main.route('/api/list_projects', methods = ['GET'])
 def listProjects():
-    response = Project.get_all_projects()
+    parameters = request
+    response = Project.get_all_projects(parameters)
     return response
 
 @main.route('/api/add_project', methods = ["POST"])
@@ -69,3 +55,26 @@ def updateProject(id):
 def deleteProject(id):
     Project.delete_project(id)
     return 'ok'
+
+
+############################
+###### API for tasks #######
+############################
+
+
+@main.route('/api/task/<id>', methods = ['GET'])
+def listTask(id):
+    response = Task.get_all_tasks(id)
+    return response
+
+@main.route('/api/add_task', methods = ["POST"])
+def addTask():  
+    newTask = Task(request.get_json())
+    newTask.insert()
+    return "listo"
+
+@main.route('/api/add_sub_task', methods = ['POST'])
+def addSubTask():
+    subTask = request.get_json()
+    Task.insert_sub_task(subTask)
+    return 'oki'

@@ -25,7 +25,7 @@ export default new Router({
       component: ListProjects
     },
     {
-      path: '/project-view',
+      path: '/project-view/:id',
       name: 'project-view',
       component: projectView
     },
