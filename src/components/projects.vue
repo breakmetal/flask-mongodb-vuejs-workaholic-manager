@@ -46,6 +46,16 @@
                   <v-col cols="12" sm="4" md="4">
                     <v-text-field v-model="editedItem.description" label="description"></v-text-field>
                   </v-col>
+                  <v-col cols="12" sm="4" md="4">
+                    <v-select
+                      v-model="editedItem.status"
+                      :items="status"
+                      label="Status"
+                      dense
+                      item-text="choice"
+                      item-value="choice"
+                    ></v-select>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -118,8 +128,8 @@ import axios from 'axios'
 
     rules:{
         search: value => {
-          const pattern = /(^(t:[A-Za-z]+))|(d:2\d{3}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1])|(^(s:active){1})|(^\s+))/g
-          return pattern.test(value) || 'example search by title(t:my project) or created at d:2019-12-31'
+          const pattern = /(^(t:[A-Za-z]+))|(d:2\d{3}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1])|(^(s:active){1})|(^(s:inactive){1})|(^\s+))/g
+          return pattern.test(value) || 'example search by title(t:my project) or status s:active or s:inactive'
       }
      }, 
          
@@ -145,8 +155,10 @@ import axios from 'axios'
       editedIndex: -1,
       editedItem: {
         title: '',
-        description: ''
+        description: '',
+        status: "active"
       },
+      status:[{choice: "active"},{choice: "inactive"}],
       defaultItem: {
       },
     }),

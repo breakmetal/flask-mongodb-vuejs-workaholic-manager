@@ -3,15 +3,10 @@ from . import main
 from ..models.task import Task
 from ..models.project import Project
 
-@main.route('/form_task', methods = ["GET"])
-def form():
-    return """
-    <form method="post"  action="/add_task">
-        <input type="text" name="title">
-        <input type="date" name="date_limit" id="txt2">
-        <input type="text" name="description" id="txt3">  
-        <input type="submit">
-    </form>"""
+@main.route('/', defaults={'path': ''})
+@main.route('/<path:path>')
+def dender_vue(path):
+    return render_template("index.html")
 
 
 
@@ -72,6 +67,11 @@ def addTask():
     newTask = Task(request.get_json())
     newTask.insert()
     return "listo"
+
+@main.route('/api/delete_task/<id>', methods = ['DELETE'])
+def deleteTask(id):
+    Task.delete_task(id)
+    return 'ok'
 
 @main.route('/api/add_sub_task', methods = ['POST'])
 def addSubTask():

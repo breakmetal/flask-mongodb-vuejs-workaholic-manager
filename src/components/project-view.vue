@@ -131,8 +131,8 @@
                     </v-btn>
                   </template>
                 <v-list>
-                  <v-list-item @click="editItem(item)">update</v-list-item>
-                  <v-list-item>delete</v-list-item>
+                  <v-list-item >update</v-list-item>
+                  <v-list-item @click=" prevDelete(item)">delete</v-list-item>
                 </v-list>
           </v-menu>
         </v-card-title>
@@ -258,7 +258,24 @@ import axios from 'axios'
       prevSubTask(item){
         this.formSubTask.idTask = item._id.$oid
         this.dialogSubTask = true
-      }
+      },
+      prevDelete(item){
+        this.editedItem = Object.assign({}, item)
+        this.deleteItem()
+      },
+      deleteItem () {
+        this.id = this.editedItem._id.$oid
+        axios({ method: 'DELETE', url: `http://127.0.0.1:5000/api/delete_task/${this.id}` }).then(
+                result => {
+                            console.log(result.data)
+                            this.getTasks(this.idProject)
+
+                },
+            error => {
+                console.error(error)
+            })
+        this.alertDelete = false
+      },
       },
      
     }

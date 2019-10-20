@@ -37,7 +37,7 @@ class Project(object):
     @staticmethod
     def update_project(id, kwargs):
         data = kwargs.get_json()
-        return mongo.db.projects.update({"_id": ObjectId(id)}, {"$set": {"title": data['title'], "description": data['description']}} , upsert = True)
+        return mongo.db.projects.update({"_id": ObjectId(id)}, {"$set": {"title": data['title'], "description": data['description'], "status": data['status']}} , upsert = True)
 
     @staticmethod
     def delete_project(id):

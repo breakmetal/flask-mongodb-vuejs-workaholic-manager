@@ -32,6 +32,10 @@ class Task(object):
     def  insert(self):
         data = self.__dict__
         mongo.db.tasks.insert_one(data)
+    
+    @staticmethod
+    def delete_task(id):
+        mongo.db.tasks.delete_one({"_id": ObjectId(id)})
 
     @staticmethod
     def insert_sub_task(kwargs):
@@ -46,5 +50,6 @@ class Task(object):
     def update_sub_task(self, parameter_list):
         mongo.db.tasks.update({"title": 'working hard'}, {'$set':{"sub-task":[ {"title": 'I fine'}]}})
         return 'hi'
+
 
         
